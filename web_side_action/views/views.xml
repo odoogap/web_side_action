@@ -1,0 +1,10 @@
+<odoo>
+  <data>
+
+    <template id="assets_backend" inherit_id="web.assets_backend" name="Side Action Backend Assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/web_side_action/static/src/js/side_action.js"></script>
+        </xpath>
+    </template>
+  </data>
+</odoo>

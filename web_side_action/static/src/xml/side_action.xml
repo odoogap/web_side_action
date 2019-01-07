@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="sideaction.action_button">
+        <button t-if='widget and widget.side_action' t-attf-data-action="#{widget.side_action}" t-attf-data-actionname="#{widget.side_action_name}" type="button" class="btn btn-sm btn-default o_list_button_extra"><t t-esc="widget.side_action_name"/></button>
+    </t>
+    <t t-extend="ListView.buttons">
+        <t t-jquery="button.o_list_button_add" t-operation="after">
+           <t t-call="sideaction.action_button"/>
+        </t>
+    </t>
+</templates>
