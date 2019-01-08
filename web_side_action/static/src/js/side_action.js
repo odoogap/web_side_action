@@ -13,6 +13,7 @@ odoo.define('web.sideaction',function(require){
     var FormController = require('web.FormController');
     var FormRenderer = require('web.FormRenderer');
 
+    var _t = core._t;
     var ControllerMixin = {
         custom_init: function (parent, state, params) {
             this.side_action = this.arch.attrs.side_action;
@@ -49,12 +50,18 @@ odoo.define('web.sideaction',function(require){
                 return;
             }
             self.get_action(self.side_action).then(function(action_id){
+                if(!action_id){
+                    self.invalid_sideaction = true;
+                    self.do_warn(_t("Invalid xmlid in side_action: " + self.side_action));
+                    return;
+                }
                 self.get_action_type(action_id).then(function(action_data){
-                    var action_data = action_data[0]
+                    var action_data = action_data[0];
                     self.side_action_name = action_data.name;
                     $(document).find("[data-action='" + self.side_action + "']").html(self.side_action_name);
 
                     self.get_action_details(action_data).then(function (finalresult) {
+                        self.invalid_sideaction = false;
                         self.sideactions[self.side_action] = finalresult[0];
                         self.$buttons.on('click', '.o_list_button_extra', self._clickExtraButtons.bind(self));
                     });
