@@ -8,4 +8,14 @@
            <t t-call="sideaction.action_button"/>
         </t>
     </t>
+    <t t-extend="KanbanView.buttons">
+        <t t-jquery="button.o-kanban-button-new" t-operation="after">
+            <t t-call="sideaction.action_button"/>
+        </t>
+    </t>
+	<t t-extend="FormView.buttons">
+        <t t-jquery="button.o_form_button_create" t-operation="after">
+           <t t-call="sideaction.action_button"/>
+		</t>
+	</t>
 </templates>
