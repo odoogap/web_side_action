@@ -16,7 +16,9 @@ odoo.define('web.sideaction',function(require){
     var _t = core._t;
     var ControllerMixin = {
         custom_init: function (parent, state, params) {
-            this.side_action = this.arch.attrs.side_action;
+            this.side_action = '';
+            if(this.arch.attrs.side_action)
+                this.side_action = this.arch.attrs.side_action.split(',');
         },
         _clickExtraButtons: function (event) {
             event.stopPropagation();
@@ -49,29 +51,29 @@ odoo.define('web.sideaction',function(require){
             if(!self.side_action){
                 return;
             }
-            self.get_action(self.side_action).then(function(action_id){
-                if(!action_id){
-                    self.invalid_sideaction = true;
-                    self.do_warn(_t("Invalid xmlid in side_action: " + self.side_action));
-                    return;
-                }
-                self.get_action_type(action_id).then(function(action_data){
-                    var action_data = action_data[0];
-                    self.side_action_name = action_data.name;
-                    $(document).find("[data-action='" + self.side_action + "']").html(self.side_action_name);
+            _.each(self.side_action, function(side_action){
+                self.get_action(side_action).then(function(action_id){
+                    if(!action_id){
+                        self.invalid_sideaction = true;
+                        self.do_warn(_t("Invalid xmlid(s) in side_action: " + side_action));
+                        return;
+                    }
+                    self.get_action_type(action_id).then(function(action_data){
+                        var action_data = action_data[0];
+                        $(document).find("[data-action='" + side_action + "']").html(action_data.name);
 
-                    self.get_action_details(action_data).then(function (finalresult) {
-                        self.invalid_sideaction = false;
-                        self.sideactions[self.side_action] = finalresult[0];
-                        self.$buttons.on('click', '.o_list_button_extra', self._clickExtraButtons.bind(self));
-                    });
-                })
+                        self.get_action_details(action_data).then(function (finalresult) {
+                            self.invalid_sideaction = false;
+                            self.sideactions[side_action] = finalresult[0];
+                        });
+                    })
+                });
             });
+
         },
         _bindButtons: function () {
             var self = this;
             self.side_action = this.renderer.side_action;
-            self.side_action_name = '';
             self.sideactions = {}
             self.setup_extra_buttons();
         },
@@ -100,6 +102,8 @@ odoo.define('web.sideaction',function(require){
         renderButtons: function ($node) {
             ControllerMixin._bindButtons.call(this);
             this._super.apply(this, arguments);
+            if(this.$buttons)
+                this.$buttons.on('click', '.o_list_button_extra', this._clickExtraButtons.bind(this));
         },
         _clickExtraButtons: function (event) {
             ControllerMixin._clickExtraButtons.apply(this, arguments);

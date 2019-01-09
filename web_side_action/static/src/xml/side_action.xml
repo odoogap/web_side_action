@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     <t t-name="sideaction.action_button">
-        <button t-if='widget and widget.side_action' t-attf-data-action="#{widget.side_action}" t-attf-data-actionname="#{widget.side_action_name}" type="button" class="btn btn-sm btn-default o_list_button_extra"><t t-esc="widget.side_action_name"/></button>
+        <t t-if='widget' t-foreach="widget.side_action" t-as="side_action">
+            <button t-attf-data-action="#{side_action}" type="button" class="btn btn-sm btn-default o_list_button_extra"></button>
+        </t>
     </t>
     <t t-extend="ListView.buttons">
         <t t-jquery="button.o_list_button_add" t-operation="after">

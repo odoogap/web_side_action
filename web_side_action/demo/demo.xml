@@ -1,5 +1,14 @@
 <odoo>
   <data>
-  		<!-- sale.view_quotation_tree -->
+        <record id="action_res_users_inherit" model="ir.ui.view">
+            <field name="name">res.users.form.inherit.sideaction</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="side_action">base.action_res_company_form</attribute>
+                </xpath>
+            </field>
+        </record>
   </data>
 </odoo>
