@@ -32,7 +32,7 @@ odoo.define('web.sideaction',function(require){
         get_action: function(xmlid){
             return new Model('ir.model.data').call('xmlid_to_res_id', {xmlid: xmlid});
         },
-        set_namecustom_buttons: function(){
+        setname_custombuttons: function(){
             var self = this;
             _.each(self.sideactions, function(side_action, side_action_key){
                 $(document).find("[data-action='" + side_action_key + "']").html(side_action.name);
@@ -56,7 +56,7 @@ odoo.define('web.sideaction',function(require){
                             self.invalid_sideaction = false;
                             self.sideactions[side_action] = finalresult[0];
                             $(document).find("[data-action='" + side_action + "']").html(action_data.name);
-                            self.set_namecustom_buttons();
+                            self.setname_custombuttons();
                         });
                     })
                 });
@@ -66,7 +66,7 @@ odoo.define('web.sideaction',function(require){
             var self = this;
             self.sideactions = {}
             self.setup_extra_buttons();
-            self.set_namecustom_buttons();
+            self.setname_custombuttons();
         },
     };
 
@@ -90,8 +90,8 @@ odoo.define('web.sideaction',function(require){
         setup_extra_buttons: function(){
             ControllerMixin.setup_extra_buttons.apply(this, arguments);
         },
-        set_namecustom_buttons: function(){
-            ControllerMixin.set_namecustom_buttons.apply(this, arguments);
+        setname_custombuttons: function(){
+            ControllerMixin.setname_custombuttons.apply(this, arguments);
         },
         render_buttons: function ($node) {
             var self = this;
