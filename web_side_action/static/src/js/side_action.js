@@ -3,22 +3,20 @@ odoo.define('web.sideaction',function(require){
     
     var core = require('web.core');
     var qweb = core.qweb;
-
-    var ListController = require("web.ListController");
-    var ListRenderer = require("web.ListRenderer");
-
-    var KanbanController = require('web.KanbanController');
-    var KanbanRenderer = require('web.KanbanRenderer');
-
-    var FormController = require('web.FormController');
-    var FormRenderer = require('web.FormRenderer');
-
     var _t = core._t;
+
+    var Model = require('web.Model');
+    var ajax = require('web.ajax');
+    
+    var ListView = require('web.ListView');
+    var KanbanView = require('web_kanban.KanbanView');
+    var FormView = require('web.FormView');
+
     var ControllerMixin = {
         custom_init: function (parent, state, params) {
             this.side_action = '';
-            if(this.arch.attrs.side_action)
-                this.side_action = this.arch.attrs.side_action.split(',');
+            if(this.fields_view.arch.attrs.side_action)
+                this.side_action = this.fields_view.arch.attrs.side_action.split(',');
         },
         _clickExtraButtons: function (event) {
             event.stopPropagation();
@@ -26,24 +24,18 @@ odoo.define('web.sideaction',function(require){
             this.do_action(action_data);
         },
         get_action_details: function(action_data){
-            return this._rpc({
-                model: action_data.type,
-                method: 'read',
-                args: [action_data.id, ["type","name","tag","res_model","views","view_type","view_mode","target","context","domain"]],
-            });
+            return new Model(action_data.type).call('read', [action_data.id, ["type","name","tag","res_model","views","view_type","view_mode","target","context","domain"]]);
         },
         get_action_type: function(action_id){
-            return this._rpc({
-                model: 'ir.actions.actions',
-                method: 'read',
-                args: [action_id, ["type","name"]],
-            });
+            return new Model('ir.actions.actions').call('read', [action_id, ["type","name"]]);
         },
         get_action: function(xmlid){
-            return this._rpc({
-                model: 'ir.model.data',
-                method: 'xmlid_to_res_id',
-                kwargs: {xmlid: xmlid},
+            return new Model('ir.model.data').call('xmlid_to_res_id', {xmlid: xmlid});
+        },
+        set_namecustom_buttons: function(){
+            var self = this;
+            _.each(self.sideactions, function(side_action, side_action_key){
+                $(document).find("[data-action='" + side_action_key + "']").html(side_action.name);
             });
         },
         setup_extra_buttons: function(){
@@ -60,22 +52,21 @@ odoo.define('web.sideaction',function(require){
                     }
                     self.get_action_type(action_id).then(function(action_data){
                         var action_data = action_data[0];
-                        $(document).find("[data-action='" + side_action + "']").html(action_data.name);
-
                         self.get_action_details(action_data).then(function (finalresult) {
                             self.invalid_sideaction = false;
                             self.sideactions[side_action] = finalresult[0];
+                            $(document).find("[data-action='" + side_action + "']").html(action_data.name);
+                            self.set_namecustom_buttons();
                         });
                     })
                 });
             });
-
         },
         _bindButtons: function () {
             var self = this;
-            self.side_action = this.renderer.side_action;
             self.sideactions = {}
             self.setup_extra_buttons();
+            self.set_namecustom_buttons();
         },
     };
 
@@ -99,9 +90,14 @@ odoo.define('web.sideaction',function(require){
         setup_extra_buttons: function(){
             ControllerMixin.setup_extra_buttons.apply(this, arguments);
         },
-        renderButtons: function ($node) {
+        set_namecustom_buttons: function(){
+            ControllerMixin.set_namecustom_buttons.apply(this, arguments);
+        },
+        render_buttons: function ($node) {
+            var self = this;
             ControllerMixin._bindButtons.call(this);
             this._super.apply(this, arguments);
+
             if(this.$buttons)
                 this.$buttons.on('click', '.o_list_button_extra', this._clickExtraButtons.bind(this));
         },
@@ -110,13 +106,12 @@ odoo.define('web.sideaction',function(require){
         },
     };
 
-    ListRenderer.include(CommonRendererMixin);
-    ListController.include(CommonControllerMixin);
+    ListView.include(CommonRendererMixin);
+    KanbanView.include(CommonRendererMixin);
+    FormView.include(CommonRendererMixin);
 
-    KanbanRenderer.include(CommonRendererMixin);
-    KanbanController.include(CommonControllerMixin);
-
-    FormRenderer.include(CommonRendererMixin);
-    FormController.include(CommonControllerMixin);
+    ListView.include(CommonControllerMixin);
+    KanbanView.include(CommonControllerMixin);
+    FormView.include(CommonControllerMixin);
 
 });

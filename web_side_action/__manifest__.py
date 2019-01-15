@@ -16,7 +16,7 @@ Usage:
 """,
     'website': 'https://www.odoogap.com',
     'category': 'General',
-    'depends': ['base', ],
+    'depends': ['base', 'web_kanban'],
     'data': [
         'views/views.xml',
     ],

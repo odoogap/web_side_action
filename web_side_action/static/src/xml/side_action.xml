@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     <t t-name="sideaction.action_button">
-        <t t-if='widget' t-foreach="widget.side_action" t-as="side_action">
-            <button t-attf-data-action="#{side_action}" type="button" class="btn btn-sm btn-default o_list_button_extra"></button>
+        <t t-if='widget and widget.side_action'>
+            <t t-foreach="widget.side_action" t-as="side_action">
+                <button t-attf-data-action="#{side_action}" type="button" class="btn btn-sm btn-default o_list_button_extra"></button>
+            </t>
         </t>
     </t>
     <t t-extend="ListView.buttons">
