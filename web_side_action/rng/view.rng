@@ -259,7 +259,7 @@
             <rng:optional><rng:attribute name="decoration-primary"/></rng:optional>
             <rng:optional><rng:attribute name="decoration-success"/></rng:optional>
             <rng:optional><rng:attribute name="decoration-warning"/></rng:optional>
-            <!-- <rng:optional><rng:attribute name="side_action"/></rng:optional> -->
+            <rng:optional><rng:attribute name="side_action"/></rng:optional>
             <rng:optional>
                 <rng:attribute name="limit">
                     <rng:data type="int"/>
