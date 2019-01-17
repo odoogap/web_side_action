@@ -46,6 +46,7 @@ odoo.define('web.sideaction',function(require){
                 });
                 action_data.domain = result.domain;
                 action_data.context = result.context;
+                action_data.context['old_context'] = self.dataset.context;
                 self.do_action(action_data);
             }
         },
