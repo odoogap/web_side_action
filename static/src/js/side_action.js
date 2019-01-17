@@ -29,16 +29,25 @@ odoo.define('web.sideaction',function(require){
             if(isFormView){
                 var active_id = self.datarecord.id;
 
-                var tempctx = new data.CompoundContext(action_data.context)
-                    .set_eval_context({
+                var eval_context = {
                         active_id: active_id,
                         active_ids: [active_id],
                         active_model: self.model,
-                    });
-                var context = pyeval.eval('context',tempctx);                
-                action_data.context = context;
+                    }
+                var compound_domain = new data.CompoundDomain(action_data.domain);
+                compound_domain.set_eval_context(eval_context);
+
+                var tempctx = new data.CompoundContext(action_data.context)
+                    .set_eval_context(eval_context);
+
+                var result = pyeval.sync_eval_domains_and_contexts({
+                    domains: [compound_domain],
+                    contexts: [tempctx],
+                });
+                action_data.domain = result.domain;
+                action_data.context = result.context;
+                self.do_action(action_data);
             }
-            this.do_action(action_data);
         },
         get_action_details: function(action_data){
             return new Model(action_data.type).call('read', [action_data.id, ["type","name","tag","res_model","views","view_type","view_mode","target","context","domain"]]);
@@ -79,11 +88,13 @@ odoo.define('web.sideaction',function(require){
                 });
             });
         },
+
         _bindButtons: function () {
             var self = this;
-            self.sideactions = {}
-            self.setup_extra_buttons();
+            if(self.sideactions === undefined)
+                self.sideactions = {};
             self.setname_custombuttons();
+            self.setup_extra_buttons();
         },
     };
 
