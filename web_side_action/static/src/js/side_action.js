@@ -30,7 +30,6 @@ odoo.define('web.sideaction',function(require){
             var isFormView = $(event.target.parentNode).hasClass('o_form_buttons_view');
             if(isFormView){
                 var active_ids = self.getSelectedIds();
-                var record = self.model.get(self.handle);
                 var tempctx = new Context(action_data.context)
                     .set_eval_context({
                         active_id: active_ids[0],
