@@ -12,6 +12,9 @@ odoo.define('web.sideaction',function(require){
     var KanbanView = require('web_kanban.KanbanView');
     var FormView = require('web.FormView');
 
+    var data = require('web.data');
+    var pyeval = require('web.pyeval');
+
     var ControllerMixin = {
         custom_init: function (parent, state, params) {
             this.side_action = '';
@@ -19,8 +22,22 @@ odoo.define('web.sideaction',function(require){
                 this.side_action = this.fields_view.arch.attrs.side_action.split(',');
         },
         _clickExtraButtons: function (event) {
+            var self = this;
             event.stopPropagation();
             var action_data = this.sideactions[$(event.target).data('action')];
+            var isFormView = $(event.target.parentNode).hasClass('o_form_buttons_view');
+            if(isFormView){
+                var active_id = self.datarecord.id;
+
+                var tempctx = new data.CompoundContext(action_data.context)
+                    .set_eval_context({
+                        active_id: active_id,
+                        active_ids: [active_id],
+                        active_model: self.model,
+                    });
+                var context = pyeval.eval('context',tempctx);                
+                action_data.context = context;
+            }
             this.do_action(action_data);
         },
         get_action_details: function(action_data){
@@ -97,7 +114,7 @@ odoo.define('web.sideaction',function(require){
             var self = this;
             ControllerMixin._bindButtons.call(this);
             this._super.apply(this, arguments);
-
+            self.setname_custombuttons();
             if(this.$buttons)
                 this.$buttons.on('click', '.o_list_button_extra', this._clickExtraButtons.bind(this));
         },
