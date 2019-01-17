@@ -91,8 +91,9 @@ odoo.define('web.sideaction',function(require){
 
         _bindButtons: function () {
             var self = this;
-            if(self.sideactions === undefined)
+            if(self.sideactions === undefined){
                 self.sideactions = {};
+            }
             self.setname_custombuttons();
             self.setup_extra_buttons();
         },
@@ -125,7 +126,6 @@ odoo.define('web.sideaction',function(require){
             var self = this;
             ControllerMixin._bindButtons.call(this);
             this._super.apply(this, arguments);
-            self.setname_custombuttons();
             if(this.$buttons)
                 this.$buttons.on('click', '.o_list_button_extra', this._clickExtraButtons.bind(this));
         },
@@ -141,5 +141,12 @@ odoo.define('web.sideaction',function(require){
     ListView.include(CommonControllerMixin);
     KanbanView.include(CommonControllerMixin);
     FormView.include(CommonControllerMixin);
+
+    FormView.include({
+        do_load_state: function(state, warm) {
+            this._super(state, warm);
+            this.setname_custombuttons();
+        },
+    });
 
 });
