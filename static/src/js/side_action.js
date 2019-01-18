@@ -26,29 +26,21 @@ odoo.define('web.sideaction',function(require){
             event.stopPropagation();
             var action_data = this.sideactions[$(event.target).data('action')];
             var isFormView = $(event.target.parentNode).hasClass('o_form_buttons_view');
-            if(isFormView){
-                var active_id = self.datarecord.id;
 
-                var eval_context = {
-                        active_id: active_id,
-                        active_ids: [active_id],
-                        active_model: self.model,
-                    }
-                var compound_domain = new data.CompoundDomain(action_data.domain);
-                compound_domain.set_eval_context(eval_context);
+            var eval_context = self.dataset.context;
+            // var compound_domain = new data.CompoundDomain(action_data.domain);
+            // compound_domain.set_eval_context(eval_context);
 
-                var tempctx = new data.CompoundContext(action_data.context)
-                    .set_eval_context(eval_context);
+            var tempctx = new data.CompoundContext(action_data.context)
+                .set_eval_context(eval_context);
+            var result = pyeval.sync_eval_domains_and_contexts({
+                contexts: [tempctx],
+            });
+            action_data.domain = result.domain;
+            action_data.context = result.context;
 
-                var result = pyeval.sync_eval_domains_and_contexts({
-                    domains: [compound_domain],
-                    contexts: [tempctx],
-                });
-                action_data.domain = result.domain;
-                action_data.context = result.context;
-                action_data.context['old_context'] = self.dataset.context;
-                self.do_action(action_data);
-            }
+            action_data.context['old_context'] = self.dataset.context;
+            self.do_action(action_data);
         },
         get_action_details: function(action_data){
             return new Model(action_data.type).call('read', [action_data.id, ["type","name","tag","res_model","views","view_type","view_mode","target","context","domain"]]);
