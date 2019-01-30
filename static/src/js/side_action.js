@@ -142,4 +142,16 @@ odoo.define('web.sideaction',function(require){
         },
     });
 
+    KanbanView.include({
+        render_buttons: function($node) {
+            var self = this;
+            if (self.options.action_buttons !== false && !self.is_action_enabled('create')) {
+                self.$buttons = $(qweb.render("KanbanView.buttons", {'widget': self}));
+            }
+            this._super.apply(this, arguments);
+            this.update_buttons();
+            this.$buttons.appendTo($node);
+        },
+    });
+
 });

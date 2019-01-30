@@ -7,14 +7,29 @@
             </t>
         </t>
     </t>
+    <t t-name="sideaction.kanban_action_button">
+        <t t-if='widget and widget.side_action'>
+            <t t-foreach="widget.side_action" t-as="side_action">
+                <button t-attf-data-action="#{side_action}" type="button" class="btn btn-sm btn-default o_list_button_extra"></button>
+            </t>
+        </t>
+    </t>
     <t t-extend="ListView.buttons">
         <t t-jquery="button.o_list_button_add" t-operation="after">
            <t t-call="sideaction.action_button"/>
         </t>
     </t>
+
     <t t-extend="KanbanView.buttons">
-        <t t-jquery="button.o-kanban-button-new" t-operation="after">
-            <t t-call="sideaction.action_button"/>
+        <t t-jquery="div" t-operation="replace">
+            <div>
+                <t t-if="widget.is_action_enabled('create')">
+                    <button type="button" class="btn btn-primary btn-sm o-kanban-button-new" accesskey="c">
+                        <t t-esc="widget.options.create_text || _t('Create')"/>
+                    </button>
+                </t>
+                <t t-call="sideaction.kanban_action_button"/>
+            </div>
         </t>
     </t>
 	<t t-extend="FormView.buttons">
