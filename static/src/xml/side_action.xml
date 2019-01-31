@@ -7,15 +7,8 @@
             </t>
         </t>
     </t>
-    <t t-name="sideaction.kanban_action_button">
-        <t t-if='widget and widget.side_action'>
-            <t t-foreach="widget.side_action" t-as="side_action">
-                <button t-attf-data-action="#{side_action}" type="button" class="btn btn-sm btn-default o_list_button_extra"></button>
-            </t>
-        </t>
-    </t>
     <t t-extend="ListView.buttons">
-        <t t-jquery="button.o_list_button_add" t-operation="after">
+        <t t-jquery="div.o_list_buttons" t-operation="append">
            <t t-call="sideaction.action_button"/>
         </t>
     </t>
@@ -28,12 +21,13 @@
                         <t t-esc="widget.options.create_text || _t('Create')"/>
                     </button>
                 </t>
-                <t t-call="sideaction.kanban_action_button"/>
+                <t t-call="sideaction.action_button"/>
             </div>
         </t>
     </t>
+
 	<t t-extend="FormView.buttons">
-        <t t-jquery="button.o_form_button_create" t-operation="after">
+        <t t-jquery="div.o_form_buttons_view" t-operation="append">
            <t t-call="sideaction.action_button"/>
 		</t>
 	</t>

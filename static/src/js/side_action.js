@@ -119,8 +119,10 @@ odoo.define('web.sideaction',function(require){
             var self = this;
             ControllerMixin._bindButtons.call(this);
             this._super.apply(this, arguments);
-            if(this.$buttons)
+
+            if(this.$buttons){
                 this.$buttons.on('click', '.o_list_button_extra', this._clickExtraButtons.bind(this));
+            }
         },
         _clickExtraButtons: function (event) {
             ControllerMixin._clickExtraButtons.apply(this, arguments);
@@ -143,15 +145,17 @@ odoo.define('web.sideaction',function(require){
     });
 
     KanbanView.include({
-        render_buttons: function($node) {
+        render_buttons: function ($node) {
             var self = this;
             if (self.options.action_buttons !== false && !self.is_action_enabled('create')) {
                 self.$buttons = $(qweb.render("KanbanView.buttons", {'widget': self}));
             }
+            self.update_buttons();
+            if(this.$buttons){
+                this.$buttons.appendTo($node);
+            }
             this._super.apply(this, arguments);
-            this.update_buttons();
-            this.$buttons.appendTo($node);
-        },
+        }
     });
 
 });
