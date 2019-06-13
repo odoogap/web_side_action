@@ -25,6 +25,7 @@ odoo.define('web.sideaction',function(require){
             var self = this;
             event.stopPropagation();
             var action_data = this.sideactions[$(event.target).data('action')];
+            var active_ids = []
             var isFormView = $(event.target.parentNode).hasClass('o_form_buttons_view');
 
             var eval_context = self.dataset.context;
@@ -38,8 +39,9 @@ odoo.define('web.sideaction',function(require){
             });
             action_data.domain = result.domain;
             action_data.context = result.context;
-
+            active_ids = self.get_selected_ids()
             action_data.context['old_context'] = self.dataset.context;
+            action_data.context['old_context']['selected_ids'] = active_ids
             self.do_action(action_data);
         },
         get_action_details: function(action_data){
